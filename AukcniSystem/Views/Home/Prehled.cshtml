@@ -1,22 +1,46 @@
-﻿@model (List<AukcniSystem.Models.Aukce> Aukce, double Zustatek)
+﻿@model (double Zustatek, List<AukcniSystem.Models.Aukce> Aukce, List<AukcniSystem.Models.Prihoz> Prihozy)
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<Klient> SignInManager
 @inject UserManager<Klient> UserManager
 
 @{
-    ViewData["Title"] = "Přehled";
+	ViewData["Title"] = "Přehled";
 }
 
-<h1>Přehled</h1>
-<section>
-	<h2>Můj účet</h2>
-	<div class="text-lg">Zůstatek: @Model.Zustatek</div>
+<h1 class="tw-my-8 tw-text-3xl">Přehled</h1>
+<section class="tw-mb-8">
+	<h2 class="tw-text-2xl">Můj účet</h2>
+	<div class="tw-text-xl">Zůstatek: <strong class="tw-font-semibold">@Model.Zustatek Kč</strong></div>
+	<h3 class="tw-text-xl tw-mt-4">Změnit zůstatek</h3>
+	<form method="post" class="tw-max-w-sm">
+		<div class="form-floating mb-3">
+			<input type="number" name="novyZustatek" id="novyZustatek" class="form-control" aria-required="true" />
+			<label for="novyZustatek">Nový zůstatek</label>
+		</div>
+		<button type="submit" class="w-100 btn btn-primary">Změnit zůstatek</button>
+	</form>
 </section>
-
-<h2>Moje aukce</h2>
-<section>
+<hr/>
+<section class="tw-mb-8">
+	<h2 class="tw-text-2xl">Moje aukce</h2>
+	@if (Model.Aukce.Count == 0)
+	{
+		<div class="tw-text-lg tw-text-gray-500">Ještě nemáte žádné aukce...</div>
+	}
 	@foreach (var Aukce in Model.Aukce)
 	{
 		<div>@Aukce.Nazev</div>
+	}
+</section>
+<hr/>
+<section class="tw-mb-8">
+	<h2 class="tw-text-2xl">Moje příhozy</h2>
+	@if (Model.Prihozy.Count == 0)
+	{
+		<div class="tw-text-lg tw-text-gray-500">Ještě jste k žádné aukci nepřihodili...</div>
+	}
+	@foreach (var Prihoz in Model.Prihozy)
+	{
+		<div>@Prihoz.Castka</div>
 	}
 </section>
