@@ -1,0 +1,79 @@
+﻿@model AukcniSystem.Models.Aukce
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Aukce</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AukceId" />
+            <div class="form-group">
+                <label asp-for="AutorId" class="control-label"></label>
+                <select asp-for="AutorId" class="form-control" asp-items="ViewBag.AutorId"></select>
+                <span asp-validation-for="AutorId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KategorieId" class="control-label"></label>
+                <select asp-for="KategorieId" class="form-control" asp-items="ViewBag.KategorieId"></select>
+                <span asp-validation-for="KategorieId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Popis" class="control-label"></label>
+                <input asp-for="Popis" class="form-control" />
+                <span asp-validation-for="Popis" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cena" class="control-label"></label>
+                <input asp-for="Cena" class="form-control" />
+                <span asp-validation-for="Cena" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Foto" class="control-label"></label>
+                <input asp-for="Foto" class="form-control" />
+                <span asp-validation-for="Foto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Datum" class="control-label"></label>
+                <input asp-for="Datum" class="form-control" />
+                <span asp-validation-for="Datum" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PrihozeniPoCastce" /> @Html.DisplayNameFor(model => model.PrihozeniPoCastce)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinimalniPrihoz" class="control-label"></label>
+                <input asp-for="MinimalniPrihoz" class="form-control" />
+                <span asp-validation-for="MinimalniPrihoz" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Schvalena" /> @Html.DisplayNameFor(model => model.Schvalena)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="DobaTrvani" class="control-label"></label>
+                <input asp-for="DobaTrvani" class="form-control" />
+                <span asp-validation-for="DobaTrvani" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
