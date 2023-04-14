@@ -7,6 +7,7 @@
         public Klient Autor { get; set; } = null!;
         public int KategorieId { get; set; }
         public Kategorie Kategorie { get; set; } = null!;
+        public string? Nazev { get; set; }
         public string? Popis { get; set; }
         public double Cena { get; set; }
         public string? Foto { get; set; }

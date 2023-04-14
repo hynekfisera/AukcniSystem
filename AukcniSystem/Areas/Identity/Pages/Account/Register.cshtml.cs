@@ -146,12 +146,14 @@ namespace AukcniSystem.Areas.Identity.Pages.Account
                     var userId = await _userManager.GetUserIdAsync(user);
 
                     var _user = _context.Klienti.SingleOrDefault(x => x.Id == userId);
-                    if (_user == null)
+                    if (_user != null)
                     {
                         _user.Stat = CustomInput.Stat;
                         _user.Mesto = CustomInput.Mesto;
                         _user.Ulice = CustomInput.Ulice;
                         _user.CisloPopisne = CustomInput.CisloPopisne;
+                        _user.Role = Role.Klient;
+                        _user.Zustatek = 0;
                         _context.SaveChanges();
                     }
 

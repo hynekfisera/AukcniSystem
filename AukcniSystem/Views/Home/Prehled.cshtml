@@ -1,0 +1,22 @@
+﻿@model (List<AukcniSystem.Models.Aukce> Aukce, double Zustatek)
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Klient> SignInManager
+@inject UserManager<Klient> UserManager
+
+@{
+    ViewData["Title"] = "Přehled";
+}
+
+<h1>Přehled</h1>
+<section>
+	<h2>Můj účet</h2>
+	<div class="text-lg">Zůstatek: @Model.Zustatek</div>
+</section>
+
+<h2>Moje aukce</h2>
+<section>
+	@foreach (var Aukce in Model.Aukce)
+	{
+		<div>@Aukce.Nazev</div>
+	}
+</section>
