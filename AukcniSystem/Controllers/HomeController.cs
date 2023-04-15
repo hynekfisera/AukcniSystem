@@ -43,7 +43,29 @@ namespace AukcniSystem.Controllers
 				user.Zustatek = novyZustatek;
 				_context.SaveChanges();
 			}
-			return View((_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Aukce.Where(x => x.AutorId == _userManager.GetUserId(User)).ToList(), _context.Prihozy.Where(x => x.KlientId == _userManager.GetUserId(User)).ToList()));
+			return View("Prehled", (_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Aukce.Where(x => x.AutorId == _userManager.GetUserId(User)).ToList(), _context.Prihozy.Where(x => x.KlientId == _userManager.GetUserId(User)).ToList()));
+		}
+
+		public IActionResult NovaAukce()
+		{
+			return View((_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Kategorie.ToList()));
+		}
+
+		[HttpPost]
+		public IActionResult NovaAukce([Bind("KategorieId,Nazev,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,DobaTrvani")] Aukce aukce)
+		{
+			var user = _context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).SingleOrDefault();
+			if (user != null)
+			{
+				aukce.AutorId = user.Id;
+				if (user.Zustatek >= 10)
+				{
+					user.Zustatek = user.Zustatek - 10;
+					_context.Aukce.Add(aukce);
+					_context.SaveChanges();
+				}
+			}
+			return View("Prehled", (_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Aukce.Where(x => x.AutorId == _userManager.GetUserId(User)).ToList(), _context.Prihozy.Where(x => x.KlientId == _userManager.GetUserId(User)).ToList()));
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

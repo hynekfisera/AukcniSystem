@@ -1,0 +1,52 @@
+﻿@model (double Zustatek, List<AukcniSystem.Models.Kategorie> Kategorie)
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Klient> SignInManager
+@inject UserManager<Klient> UserManager
+
+@{
+	ViewData["Title"] = "Nová aukce";
+}
+
+<h1 class="tw-my-8 tw-text-3xl">Nová aukce</h1>
+<section class="tw-mb-8">
+	<form method="post" class="tw-max-w-md">
+		<select class="form-select" aria-label="Default select example" name="kategorieid" id="kategorieid">
+			<option selected>Kategorie</option>
+			@foreach (var Kategorie in Model.Kategorie)
+			{
+				
+			<option value="@Kategorie.KategorieId">@Kategorie.Nazev</option>
+			}
+		</select>
+		<div class="form-floating mb-3">
+			<input name="nazev" id="nazev" class="form-control" aria-required="true" />
+			<label for="nazev">Název</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input name="popis" id="popis" class="form-control" aria-required="true" />
+			<label for="popis">Popis</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input type="number" name="cena" id="cena" class="form-control" aria-required="true" />
+			<label for="cena">Cena</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input name="foto" id="foto" class="form-control" aria-required="true" />
+			<label for="foto">Odkaz na foto</label>
+		</div>
+		<input type="datetime-local" id="datum" name="datum">
+		<div class="form-floating mb-3">
+			<input type="number" name="minimalniprihoz" id="minimalniprihoz" class="form-control" aria-required="true" />
+			<label for="minimalniprihoz">Minimální příhoz</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" id="prihozenipocastce" name="prihozenipocastce" value="prihozenipocastce" checked>
+			<label class="form-check-label">Přihození po částce</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input type="number" name="dobatrvani" id="dobatrvani" class="form-control" aria-required="true" />
+			<label for="dobatrvani">Doba trvání</label>
+		</div>
+		<button type="submit" class="w-100 btn btn-primary">Vytvořit aukci</button>
+	</form>
+</section>
