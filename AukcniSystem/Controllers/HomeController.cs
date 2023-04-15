@@ -58,6 +58,7 @@ namespace AukcniSystem.Controllers
 			if (user != null)
 			{
 				aukce.AutorId = user.Id;
+				aukce.Datum = DateTime.Now;
 				if (user.Zustatek >= 10)
 				{
 					user.Zustatek = user.Zustatek - 10;
