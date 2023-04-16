@@ -38,7 +38,7 @@ namespace AukcniSystem.Controllers
 			var user = await _userManager.GetUserAsync(User);
 			await _userManager.AddToRoleAsync(user, "Admin");
 			bool isInRole = User.IsInRole("Admin");*/
-			return View((_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date).Take(10).ToList()));
+			return View((_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now).Take(10).ToList()));
 		}
 
 		public IActionResult Privacy()
@@ -111,7 +111,7 @@ namespace AukcniSystem.Controllers
 		public IActionResult Aukce([FromRoute] string id)
 		{
 			Int32.TryParse(id, out int AukceId);
-			var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).Include(x => x.Autor).FirstOrDefault();
+			var aukce = _context.Aukce.Where(x => x.AukceId == AukceId && x.Datum.Value.AddHours(x.DobaTrvani) < DateTime.Now).Include(x => x.Autor).FirstOrDefault();
 			if (aukce != null)
 			{
 				var user = _context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).SingleOrDefault();
@@ -129,7 +129,7 @@ namespace AukcniSystem.Controllers
 		{
 			double castka = body.castka;
 			int AukceId = Int32.Parse(id);
-            var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).Include(x => x.Autor).FirstOrDefault();
+            var aukce = _context.Aukce.Where(x => x.AukceId == AukceId && x.Datum.Value.AddHours(x.DobaTrvani) < DateTime.Now).Include(x => x.Autor).FirstOrDefault();
             if (aukce != null)
             {
                 var user = _context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).SingleOrDefault();
