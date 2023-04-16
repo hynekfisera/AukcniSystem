@@ -1,10 +1,15 @@
 ﻿using AukcniSystem.Data;
 using AukcniSystem.Models;
+using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace AukcniSystem.Controllers
 {
@@ -105,7 +110,7 @@ namespace AukcniSystem.Controllers
 
 		public IActionResult Aukce([FromRoute] string id)
 		{
-			int AukceId = Int32.Parse(id);
+			Int32.TryParse(id, out int AukceId);
 			var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).Include(x => x.Autor).FirstOrDefault();
 			if (aukce != null)
 			{
@@ -114,15 +119,16 @@ namespace AukcniSystem.Controllers
 				{
 					return View((aukce, user.Zustatek));
 				}
-				return View((aukce, 0));
+				return View((aukce, 0.0));
 			}
 			return View("Index", _context.Kategorie.ToList());
 		}
 
 		[HttpPost]
-        public IActionResult Aukce([FromRoute] string id, [FromForm] int castka)
-        {
-            int AukceId = Int32.Parse(id);
+        public IActionResult Aukce([FromRoute] string id, [FromBody] BodyModel body)
+		{
+			double castka = body.castka;
+			int AukceId = Int32.Parse(id);
             var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).Include(x => x.Autor).FirstOrDefault();
             if (aukce != null)
             {
@@ -135,12 +141,14 @@ namespace AukcniSystem.Controllers
 					{
 						user.Zustatek -= castka;
 						aukce.Cena += castka;
-						_context.Prihozy.Add(new Prihoz() { AukceId = aukce.AukceId, Castka = castka, NovaCena = aukce.Cena, Datum = DateTime.Now, KlientId = user.Id });
+						var prihoz = new Prihoz() { AukceId = aukce.AukceId, Castka = castka, NovaCena = aukce.Cena, Datum = DateTime.Now, KlientId = user.Id };
+                        _context.Prihozy.Add(prihoz);
 						_context.SaveChanges();
+
                     }
                     return View((aukce, zustatekZakaznika));
                 }
-                return View((aukce, 0));
+                return View((aukce, 0.0));
             }
             return View("Index", _context.Kategorie.ToList());
         }
@@ -162,4 +170,8 @@ namespace AukcniSystem.Controllers
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
 	}
+
+	public class BodyModel {
+        public double castka { get; set; }
+    }
 }
