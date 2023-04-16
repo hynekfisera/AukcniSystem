@@ -3,10 +3,10 @@
     public class Aukce
     {
         public int AukceId { get; set; }
-        public string AutorId { get; set; } = null!;
-        public Klient Autor { get; set; } = null!;
+        public string? AutorId { get; set; }
+        public Klient? Autor { get; set; }
         public int KategorieId { get; set; }
-        public Kategorie Kategorie { get; set; } = null!;
+        public Kategorie? Kategorie { get; set; }
         public string? Nazev { get; set; }
         public string? Popis { get; set; }
         public double Cena { get; set; }

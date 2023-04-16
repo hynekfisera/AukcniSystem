@@ -59,7 +59,7 @@ namespace AukcniSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AukceId,AutorId,KategorieId,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,Schvalena,DobaTrvani")] Aukce aukce)
+        public async Task<IActionResult> Create([Bind("AukceId,AutorId,KategorieId,Nazev,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,Schvalena,DobaTrvani")] Aukce aukce)
         {
             if (ModelState.IsValid)
             {
@@ -95,7 +95,7 @@ namespace AukcniSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AukceId,AutorId,KategorieId,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,Schvalena,DobaTrvani")] Aukce aukce)
+        public async Task<IActionResult> Edit(int id, [Bind("AukceId,AutorId,KategorieId,Nazev,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,Schvalena,DobaTrvani")] Aukce aukce)
         {
             if (id != aukce.AukceId)
             {
