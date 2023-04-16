@@ -97,9 +97,26 @@ namespace AukcniSystem.Controllers
 			if (aukce != null)
 			{
 				aukce.Schvalena = true;
+				aukce.Datum = DateTime.Now;
 				_context.SaveChanges();
 			}
 			return View(_context.Aukce.Where(x => x.Schvalena == false).ToList());
+		}
+
+		public IActionResult Aukce([FromRoute] string id)
+		{
+			int AukceId = Int32.Parse(id);
+			var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).Include(x => x.Autor).FirstOrDefault();
+			if (aukce != null)
+			{
+				var user = _context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).SingleOrDefault();
+				if (user != null)
+				{
+					return View((aukce, user.Zustatek));
+				}
+				return View((aukce, 0));
+			}
+			return View("Index", _context.Kategorie.ToList());
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,0 +1,15 @@
+﻿@model (AukcniSystem.Models.Aukce Aukce, double Zustatek)
+
+<a href="/">Zpět na hlavní stránku</a>
+<section>
+	<img src="@Model.Aukce.Foto" class="tw-max-w-xs" />
+	<h1>@Model.Aukce.Nazev</h1>
+	<h2>@Model.Aukce.Popis</h2>
+	<div class="tw-text-xl tw-font-semibold">@Model.Aukce.Cena Kč</div>
+	<form method="post">
+		<input type="number" id="castka" name="castka" placeholder="Minimální příhoz: @Model.Aukce.MinimalniPrihoz @(Model.Aukce.PrihozeniPoCastce ? "Kč" : "%")"  />
+		<button class="btn btn-primary">Přihodit</button>
+	</form>
+	<div>Datum zahájení: @Model.Aukce.Datum</div>
+	<div>Doba trvání: @Model.Aukce.DobaTrvani</div>
+</section>
