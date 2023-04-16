@@ -25,14 +25,14 @@ namespace AukcniSystem.Controllers
 
 		public async Task<IActionResult> Index()
 		{
-			bool roleExists = await _roleManager.RoleExistsAsync("Admin");
+			/*bool roleExists = await _roleManager.RoleExistsAsync("Admin");
 			if (!roleExists)
 			{
 				await _roleManager.CreateAsync(new IdentityRole("Admin"));
 			}
 			var user = await _userManager.GetUserAsync(User);
-			//await _userManager.AddToRoleAsync(user, "Admin");
-			bool isInRole = User.IsInRole("Admin");
+			await _userManager.AddToRoleAsync(user, "Admin");
+			bool isInRole = User.IsInRole("Admin");*/
 			return View(_context.Kategorie.ToList());
 		}
 
@@ -115,6 +115,17 @@ namespace AukcniSystem.Controllers
 					return View((aukce, user.Zustatek));
 				}
 				return View((aukce, 0));
+			}
+			return View("Index", _context.Kategorie.ToList());
+		}
+
+		public IActionResult Kategorie([FromRoute] string id)
+		{
+			int KategorieId = Int32.Parse(id);
+			var kategorie = _context.Kategorie.Where(x => x.KategorieId == KategorieId).Include(x => x.Aukce).FirstOrDefault();
+			if (kategorie != null)
+			{
+				return View(kategorie);
 			}
 			return View("Index", _context.Kategorie.ToList());
 		}

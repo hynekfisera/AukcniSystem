@@ -1,0 +1,17 @@
+﻿@model AukcniSystem.Models.Kategorie
+
+@{
+	ViewData["Title"] = "Kategorie " + Model.Nazev;
+}
+
+<a href="/">Zpět na hlavní stránku</a>
+<h1>@Model.Nazev</h1>
+@foreach (var Aukce in Model.Aukce)
+{
+	<div>
+		<img src="@Aukce.Foto" alt="@Aukce.Nazev" class="tw-max-w-xs" />
+		<div>@Aukce.Nazev</div>
+		<div>@Aukce.Popis</div>
+		<a href="/Home/Aukce/@Aukce.AukceId">Zobrazit aukci</a>
+	</div>
+}
