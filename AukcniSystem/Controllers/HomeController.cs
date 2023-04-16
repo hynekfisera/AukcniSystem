@@ -3,6 +3,7 @@ using AukcniSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace AukcniSystem.Controllers
@@ -24,14 +25,14 @@ namespace AukcniSystem.Controllers
 
 		public async Task<IActionResult> Index()
 		{
-			/*bool roleExists = await _roleManager.RoleExistsAsync("Admin");
+			bool roleExists = await _roleManager.RoleExistsAsync("Admin");
 			if (!roleExists)
 			{
 				await _roleManager.CreateAsync(new IdentityRole("Admin"));
 			}
 			var user = await _userManager.GetUserAsync(User);
-			await _userManager.AddToRoleAsync(user, "Admin");
-			bool isInRole = User.IsInRole("Admin");*/
+			//await _userManager.AddToRoleAsync(user, "Admin");
+			bool isInRole = User.IsInRole("Admin");
 			return View(_context.Kategorie.ToList());
 		}
 
@@ -42,7 +43,7 @@ namespace AukcniSystem.Controllers
 
 		public IActionResult Prehled()
 		{
-			return View((_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Aukce.Where(x => x.AutorId == _userManager.GetUserId(User)).ToList(), _context.Prihozy.Where(x => x.KlientId == _userManager.GetUserId(User)).ToList()));
+			return View((_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Aukce.Where(x => x.AutorId == _userManager.GetUserId(User)).ToList(), _context.Prihozy.Where(x => x.KlientId == _userManager.GetUserId(User)).Include(x => x.Aukce).ToList()));
 		}
 
 		[HttpPost]
@@ -54,7 +55,7 @@ namespace AukcniSystem.Controllers
 				user.Zustatek = novyZustatek;
 				_context.SaveChanges();
 			}
-			return View("Prehled", (_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Aukce.Where(x => x.AutorId == _userManager.GetUserId(User)).ToList(), _context.Prihozy.Where(x => x.KlientId == _userManager.GetUserId(User)).ToList()));
+			return View("Prehled", (_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Aukce.Where(x => x.AutorId == _userManager.GetUserId(User)).ToList(), _context.Prihozy.Where(x => x.KlientId == _userManager.GetUserId(User)).Include(x => x.Aukce).ToList()));
 		}
 
 		public IActionResult NovaAukce()
@@ -81,7 +82,7 @@ namespace AukcniSystem.Controllers
 		}
 
 		[Authorize]
-		//[Authorize(Roles = "Admin,Ucetni,Supervizor")]
+		[Authorize(Roles = "Admin,Ucetni,Supervizor")]
 		public IActionResult AukceNaSchvaleni()
 		{
 			return View(_context.Aukce.Where(x => x.Schvalena == false).ToList());
@@ -89,7 +90,7 @@ namespace AukcniSystem.Controllers
 
 		[HttpPost]
 		[Authorize]
-		//[Authorize(Roles = "Admin,Ucetni,Supervizor")]
+		[Authorize(Roles = "Admin,Ucetni,Supervizor")]
 		public IActionResult AukceNaSchvaleni([FromForm] int AukceId)
 		{
 			var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).FirstOrDefault();

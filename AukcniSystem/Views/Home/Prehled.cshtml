@@ -29,10 +29,15 @@
 	}
 	@foreach (var Aukce in Model.Aukce)
 	{
-		<div>@Aukce.Nazev</div>
+		<div>
+			<img src="@Aukce.Foto" alt="@Aukce.Nazev" class="tw-max-w-xs" />
+			<div>@Aukce.Nazev</div>
+			<div>@Aukce.Popis</div>
+			<a href="/Home/Aukce/@Aukce.AukceId">Zobrazit aukci</a>
+		</div>
 	}
 </section>
-<hr/>
+<hr />
 <section class="tw-mb-8">
 	<h2 class="tw-text-2xl">Moje příhozy</h2>
 	@if (Model.Prihozy.Count == 0)
@@ -41,6 +46,11 @@
 	}
 	@foreach (var Prihoz in Model.Prihozy)
 	{
-		<div>@Prihoz.Castka</div>
+		<div>
+			<div>Aukce: @Prihoz.Aukce.Nazev</div>
+			<div>Částka: @Prihoz.Castka</div>
+			<div>Nová cena: @Prihoz.NovaCena</div>
+			<div>Aktuální cena aukce: @Prihoz.Aukce.Cena</div>
+		</div>
 	}
 </section>

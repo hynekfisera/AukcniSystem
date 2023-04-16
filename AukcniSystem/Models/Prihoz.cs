@@ -4,6 +4,7 @@
     {
         public int PrihozId { get; set; }
         public double Castka { get; set; }
+        public double NovaCena { get; set; }
         public DateTime Datum { get; set; }
         public string KlientId { get; set; } = null!;
         public Klient Klient { get; set; } = null!;
