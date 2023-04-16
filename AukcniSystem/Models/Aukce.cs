@@ -15,7 +15,8 @@
         public bool PrihozeniPoCastce { get; set; }
         public double MinimalniPrihoz { get; set; }
         public bool Schvalena { get; set; }
-        public int DobaTrvani { get; set; }
+		public bool Ukoncena { get; set; }
+		public int DobaTrvani { get; set; }
         public IEnumerable<Prihoz> Prihozy { get; set; } = new List<Prihoz>();
     }
 }

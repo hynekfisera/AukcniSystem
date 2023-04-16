@@ -38,7 +38,7 @@ namespace AukcniSystem.Controllers
 			var user = await _userManager.GetUserAsync(User);
 			await _userManager.AddToRoleAsync(user, "Admin");
 			bool isInRole = User.IsInRole("Admin");*/
-			return View((_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now).Take(10).ToList()));
+			return View((_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now && x.Schvalena).Take(10).ToList()));
 		}
 
 		public IActionResult Privacy()
@@ -121,20 +121,20 @@ namespace AukcniSystem.Controllers
 				}
 				return View((aukce, 0.0));
 			}
-			return View("Index", (_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now).Take(10).ToList()));
+			return View("Index", (_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now && x.Schvalena).Take(10).ToList()));
 		}
 
 		[HttpPost]
-        public IActionResult Aukce([FromRoute] string id, [FromBody] BodyModel body)
+		public IActionResult Aukce([FromRoute] string id, [FromBody] BodyModel body)
 		{
 			double castka = body.castka;
 			int AukceId = Int32.Parse(id);
-            var aukce = _context.Aukce.Where(x => x.AukceId == AukceId && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now).Include(x => x.Autor).FirstOrDefault();
-            if (aukce != null)
-            {
-                var user = _context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).SingleOrDefault();
-                if (user != null)
-                {
+			var aukce = _context.Aukce.Where(x => x.AukceId == AukceId && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now).Include(x => x.Autor).FirstOrDefault();
+			if (aukce != null)
+			{
+				var user = _context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).SingleOrDefault();
+				if (user != null)
+				{
 					var zustatekZakaznika = user.Zustatek;
 					var minimalniPrihoz = aukce.PrihozeniPoCastce ? aukce.MinimalniPrihoz : aukce.Cena * aukce.MinimalniPrihoz / 100;
 					if (castka >= minimalniPrihoz && castka <= zustatekZakaznika)
@@ -142,26 +142,61 @@ namespace AukcniSystem.Controllers
 						user.Zustatek -= castka;
 						aukce.Cena += castka;
 						var prihoz = new Prihoz() { AukceId = aukce.AukceId, Castka = castka, NovaCena = aukce.Cena, Datum = DateTime.Now, KlientId = user.Id };
-                        _context.Prihozy.Add(prihoz);
+						_context.Prihozy.Add(prihoz);
 						_context.SaveChanges();
 
-                    }
-                    return View((aukce, zustatekZakaznika));
-                }
-                return View((aukce, 0.0));
-            }
-            return View("Index", (_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now).Take(10).ToList()));
-        }
+					}
+					return View((aukce, zustatekZakaznika));
+				}
+				return View((aukce, 0.0));
+			}
+			return View("Index", (_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date && x.Datum.Value.AddHours(x.DobaTrvani) > DateTime.Now && x.Schvalena).Take(10).ToList()));
+		}
 
-        public IActionResult Kategorie([FromRoute] string id)
+		public IActionResult Kategorie([FromRoute] string id)
 		{
 			int KategorieId = Int32.Parse(id);
-			var kategorie = _context.Kategorie.Where(x => x.KategorieId == KategorieId).Include(x => x.Aukce).FirstOrDefault();
+			var kategorie = _context.Kategorie.Where(x => x.KategorieId == KategorieId).Include(x => x.Aukce.Where(x => x.Schvalena)).FirstOrDefault();
 			if (kategorie != null)
 			{
 				return View(kategorie);
 			}
 			return View("Index", _context.Kategorie.ToList());
+		}
+
+		[Authorize(Roles = "Admin,Ucetni")]
+		public IActionResult UkonceneAukce()
+		{
+			return View(_context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani) <= DateTime.Now && !x.Ukoncena).ToList());
+		}
+
+		[HttpPost]
+		[Authorize(Roles = "Admin,Ucetni")]
+		public IActionResult UkonceneAukce([FromForm] int AukceId)
+		{
+			var prihozy = _context.Prihozy.Where(x => x.AukceId == AukceId).ToList();
+			var posledniPrihoz = prihozy.OrderByDescending(x => x.NovaCena).FirstOrDefault();
+			var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).FirstOrDefault();
+
+			if (aukce != null)
+			{
+				aukce.Ukoncena = true;
+				if (posledniPrihoz != null)
+				{
+					foreach (var prihoz in prihozy.Where(x => x.KlientId != posledniPrihoz.KlientId))
+					{
+						var klient = _context.Klienti.Where(x => x.Id == prihoz.KlientId).FirstOrDefault();
+						if (klient != null)
+						{
+							klient.Zustatek += prihoz.Castka;
+						}
+					}
+					var autor = _context.Klienti.Where(x => x.Id == aukce.AutorId).FirstOrDefault();
+					autor.Zustatek += aukce.Cena;
+				}
+				_context.SaveChanges();
+			}
+			return View(_context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani) <= DateTime.Now && !x.Ukoncena).ToList());
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -171,7 +206,8 @@ namespace AukcniSystem.Controllers
 		}
 	}
 
-	public class BodyModel {
-        public double castka { get; set; }
-    }
+	public class BodyModel
+	{
+		public double castka { get; set; }
+	}
 }

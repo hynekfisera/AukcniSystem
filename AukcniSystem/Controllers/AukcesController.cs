@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AukcniSystem.Data;
 using AukcniSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AukcniSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AukcesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -59,7 +61,7 @@ namespace AukcniSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AukceId,AutorId,KategorieId,Nazev,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,Schvalena,DobaTrvani")] Aukce aukce)
+        public async Task<IActionResult> Create([Bind("AukceId,AutorId,KategorieId,Nazev,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,Schvalena,Ukoncena,DobaTrvani")] Aukce aukce)
         {
             if (ModelState.IsValid)
             {
@@ -95,7 +97,7 @@ namespace AukcniSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AukceId,AutorId,KategorieId,Nazev,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,Schvalena,DobaTrvani")] Aukce aukce)
+        public async Task<IActionResult> Edit(int id, [Bind("AukceId,AutorId,KategorieId,Nazev,Popis,Cena,Foto,Datum,PrihozeniPoCastce,MinimalniPrihoz,Schvalena,Ukoncena,DobaTrvani")] Aukce aukce)
         {
             if (id != aukce.AukceId)
             {

@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AukcniSystem.Data;
 using AukcniSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AukcniSystem.Controllers
 {
-    public class KategoriesController : Controller
+	[Authorize(Roles = "Admin")]
+	public class KategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
@@ -19,16 +21,16 @@ namespace AukcniSystem.Controllers
             _context = context;
         }
 
-        // GET: Kategories
-        public async Task<IActionResult> Index()
+		// GET: Kategories
+		public async Task<IActionResult> Index()
         {
               return _context.Kategorie != null ? 
                           View(await _context.Kategorie.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Kategorie'  is null.");
         }
 
-        // GET: Kategories/Details/5
-        public async Task<IActionResult> Details(int? id)
+		// GET: Kategories/Details/5
+		public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Kategorie == null)
             {

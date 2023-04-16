@@ -1,0 +1,16 @@
+﻿@model List<AukcniSystem.Models.Aukce>
+
+<h1>Ukončené aukce</h1>
+<section class="tw-flex tw-flex-col tw-gap-4">
+	@foreach (var aukce in Model)
+	{
+		<div>
+			<div>Název: @aukce.Nazev</div>
+			<div>Výherní cena: @aukce.Cena Kč</div>
+			<form method="post">
+				<input type="hidden" name="AukceId" value="@aukce.AukceId" />
+				<button class="btn btn-primary">Poslat peníze</button>
+			</form>
+		</div>
+	}
+</section>
