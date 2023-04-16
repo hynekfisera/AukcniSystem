@@ -1,4 +1,4 @@
-﻿@model List<AukcniSystem.Models.Kategorie>
+﻿@model (List<AukcniSystem.Models.Kategorie> Kategorie, List<AukcniSystem.Models.Aukce> Aukce)
 
 @{
     ViewData["Title"] = "Home Page";
@@ -7,13 +7,25 @@
 <section class="text-center">
     <h1 class="display-4">Aukční systém</h1>
 </section>
-<section class="tw-grid tw-grid-cols-4 tw-gap-4">
+<section class="tw-grid tw-grid-cols-4 tw-gap-16">
     <aside class="tw-flex tw-flex-col tw-gap-4">
-        @foreach (var kategorie in Model)
+        <h2 class="tw-text-3xl">Kategorie</h2>
+        @foreach (var kategorie in Model.Kategorie)
         {
             <div class="tw-text-xl tw-no-underline tw-text-gray-700 tw-font-medium tw-flex tw-items-center">
                 <div>@kategorie.Nazev</div>
                 <a href="/Home/Kategorie/@kategorie.KategorieId" class="btn btn-primary tw-ml-auto">Přejít</a>
+            </div>
+        }
+    </aside>
+    <aside class="tw-col-span-3">
+        <h2 class="tw-text-3xl">Aukce, které dnes končí</h2>
+        @foreach (var aukce in Model.Aukce)
+        {
+            <div class="tw-text-xl tw-no-underline tw-text-gray-700 tw-font-medium tw-flex tw-items-center tw-gap-4">
+                <div>@aukce.Nazev</div>
+                <div class="tw-font-normal">@aukce.Popis</div>
+                <a href="/Home/Aukce/@aukce.AukceId" class="btn btn-primary tw-ml-auto">Přejít</a>
             </div>
         }
     </aside>

@@ -23,7 +23,7 @@ namespace AukcniSystem.Controllers
 			_roleManager = roleManager;
 		}
 
-		public async Task<IActionResult> Index()
+		public IActionResult Index()
 		{
 			/*bool roleExists = await _roleManager.RoleExistsAsync("Admin");
 			if (!roleExists)
@@ -33,7 +33,7 @@ namespace AukcniSystem.Controllers
 			var user = await _userManager.GetUserAsync(User);
 			await _userManager.AddToRoleAsync(user, "Admin");
 			bool isInRole = User.IsInRole("Admin");*/
-			return View(_context.Kategorie.ToList());
+			return View((_context.Kategorie.ToList(), _context.Aukce.Where(x => x.Datum.Value.AddHours(x.DobaTrvani).Date == DateTime.Today.Date).Take(10).ToList()));
 		}
 
 		public IActionResult Privacy()
