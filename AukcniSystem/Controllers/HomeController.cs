@@ -119,7 +119,33 @@ namespace AukcniSystem.Controllers
 			return View("Index", _context.Kategorie.ToList());
 		}
 
-		public IActionResult Kategorie([FromRoute] string id)
+		[HttpPost]
+        public IActionResult Aukce([FromRoute] string id, [FromForm] int castka)
+        {
+            int AukceId = Int32.Parse(id);
+            var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).Include(x => x.Autor).FirstOrDefault();
+            if (aukce != null)
+            {
+                var user = _context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).SingleOrDefault();
+                if (user != null)
+                {
+					var zustatekZakaznika = user.Zustatek;
+					var minimalniPrihoz = aukce.PrihozeniPoCastce ? aukce.MinimalniPrihoz : aukce.Cena * aukce.MinimalniPrihoz / 100;
+					if (castka >= minimalniPrihoz && castka <= zustatekZakaznika)
+					{
+						user.Zustatek -= castka;
+						aukce.Cena += castka;
+						_context.Prihozy.Add(new Prihoz() { AukceId = aukce.AukceId, Castka = castka, NovaCena = aukce.Cena, Datum = DateTime.Now, KlientId = user.Id });
+						_context.SaveChanges();
+                    }
+                    return View((aukce, zustatekZakaznika));
+                }
+                return View((aukce, 0));
+            }
+            return View("Index", _context.Kategorie.ToList());
+        }
+
+        public IActionResult Kategorie([FromRoute] string id)
 		{
 			int KategorieId = Int32.Parse(id);
 			var kategorie = _context.Kategorie.Where(x => x.KategorieId == KategorieId).Include(x => x.Aukce).FirstOrDefault();
