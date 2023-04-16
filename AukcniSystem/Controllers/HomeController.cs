@@ -1,5 +1,6 @@
 ﻿using AukcniSystem.Data;
 using AukcniSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -11,16 +12,26 @@ namespace AukcniSystem.Controllers
 		private readonly ILogger<HomeController> _logger;
 		private readonly ApplicationDbContext _context;
 		private readonly UserManager<Klient> _userManager;
+		private readonly RoleManager<IdentityRole> _roleManager;
 
-		public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<Klient> userManager)
+		public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<Klient> userManager, RoleManager<IdentityRole> roleManager)
 		{
 			_logger = logger;
 			_context = context;
 			_userManager = userManager;
+			_roleManager = roleManager;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
+			/*bool roleExists = await _roleManager.RoleExistsAsync("Admin");
+			if (!roleExists)
+			{
+				await _roleManager.CreateAsync(new IdentityRole("Admin"));
+			}
+			var user = await _userManager.GetUserAsync(User);
+			await _userManager.AddToRoleAsync(user, "Admin");
+			bool isInRole = User.IsInRole("Admin");*/
 			return View(_context.Kategorie.ToList());
 		}
 
@@ -67,6 +78,27 @@ namespace AukcniSystem.Controllers
 				}
 			}
 			return View("Prehled", (_context.Klienti.Where(x => x.Id == _userManager.GetUserId(User)).Select(x => x.Zustatek).SingleOrDefault(), _context.Aukce.Where(x => x.AutorId == _userManager.GetUserId(User)).ToList(), _context.Prihozy.Where(x => x.KlientId == _userManager.GetUserId(User)).ToList()));
+		}
+
+		[Authorize]
+		//[Authorize(Roles = "Admin,Ucetni,Supervizor")]
+		public IActionResult AukceNaSchvaleni()
+		{
+			return View(_context.Aukce.Where(x => x.Schvalena == false).ToList());
+		}
+
+		[HttpPost]
+		[Authorize]
+		//[Authorize(Roles = "Admin,Ucetni,Supervizor")]
+		public IActionResult AukceNaSchvaleni([FromForm] int AukceId)
+		{
+			var aukce = _context.Aukce.Where(x => x.AukceId == AukceId).FirstOrDefault();
+			if (aukce != null)
+			{
+				aukce.Schvalena = true;
+				_context.SaveChanges();
+			}
+			return View(_context.Aukce.Where(x => x.Schvalena == false).ToList());
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

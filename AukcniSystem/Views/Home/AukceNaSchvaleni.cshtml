@@ -1,0 +1,17 @@
+﻿@model List<AukcniSystem.Models.Aukce>
+
+<h1>Schválení aukcí</h1>
+<section class="tw-flex tw-flex-col tw-gap-4">
+	@foreach (var Aukce in Model)
+	{
+		<div>
+			<img src="@Aukce.Foto" alt="@Aukce.Nazev" class="tw-max-w-xs" />
+			<div>@Aukce.Nazev</div>
+			<div>@Aukce.Popis</div>
+			<form method="post">
+				<input type="hidden" name="AukceId" id="aukceid" value="@Aukce.AukceId" />
+				<button type="submit" class="btn btn-primary">Schválit aukci</button>
+			</form>
+		</div>
+	}
+</section>
