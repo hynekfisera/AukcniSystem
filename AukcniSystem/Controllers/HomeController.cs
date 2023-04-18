@@ -181,6 +181,7 @@ namespace AukcniSystem.Controllers
 			if (aukce != null)
 			{
 				aukce.Ukoncena = true;
+				aukce.Datum = DateTime.Now;
 				if (posledniPrihoz != null)
 				{
 					foreach (var prihoz in prihozy.Where(x => x.KlientId != posledniPrihoz.KlientId))
