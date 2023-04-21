@@ -1,19 +1,14 @@
 ﻿using AukcniSystem.Data;
 using AukcniSystem.Models;
-using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NuGet.Protocol;
 using System.Diagnostics;
-using System.Text.Json;
 
 namespace AukcniSystem.Controllers
 {
-	public class HomeController : Controller
+    public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
 		private readonly ApplicationDbContext _context;

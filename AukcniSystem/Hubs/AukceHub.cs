@@ -1,12 +1,10 @@
 ﻿using AukcniSystem.Data;
-using AukcniSystem.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace AukcniSystem.Hubs
 {
-	public class AukceHub : Hub
+    public class AukceHub : Hub
 	{
 		private readonly ApplicationDbContext _context;
 		public AukceHub(ApplicationDbContext context)
